@@ -1,4 +1,4 @@
-const CACHE="stracare-v1";
+const CACHE="stracare-v2";
 const CORE=["/","/index.html","/css/app.css","/js/app.js","/firebase/firebase-auth.js","/manifest.json"];
 self.addEventListener("install",e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting())));
 self.addEventListener("activate",e=>e.waitUntil(self.clients.claim()));
