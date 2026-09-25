@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0369A1">
+<title>STRA CARE — Physiotherapy Booking</title>
+
+<link rel="icon" type="image/png" href="assets/logo-app.png">
+<link rel="apple-touch-icon" href="assets/logo-app.png">
+<link rel="manifest" href="manifest.json">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<div id="splash-screen" aria-label="STRA CARE Splash Screen">
+  <img src="assets/splash-screen.png" alt="STRA CARE">
+</div>
+
+<div class="app-container">
+
+<header class="header">
+  <div class="header-left">
+    <button class="icon-btn" id="btn-menu" onclick="toggleSidebar()" aria-label="Menu">
+      <i data-lucide="menu"></i>
+    </button>
+    <button class="icon-btn" id="btn-back" onclick="closeAllModals()" style="display:none" aria-label="Back">
+      <i data-lucide="arrow-left"></i>
+    </button>
+    <div class="brand">
+      <img src="assets/logo.png" alt="Logo" class="logo" onerror="this.style.display='none'">
+      <img src="assets/name.png" alt="Stra Care" class="name"
+           onerror="this.outerHTML='<h2 class=&quot;brand-fallback&quot;>STRA CARE</h2>'">
+    </div>
+  </div>
+  <div class="header-right">
+    <button class="icon-btn" onclick="openModal('search-modal')" aria-label="Search">
+      <i data-lucide="search"></i>
+    </button>
+    <button class="icon-btn theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+      <i data-lucide="moon" id="theme-icon"></i>
+    </button>
+  </div>
+</header>
+
+<main class="main-content">
+  <div class="welcome-msg animate-slide-up">
+    <h1>Good Health Awaits.</h1>
+    <p>Book your advanced physiotherapy session today with STRA CARE.</p>
+  </div>
+
+  <div class="section-header animate-slide-up delay-50">
+    <h2>Our Specialized Care</h2>
+  </div>
+
+  <div class="services-wrapper animate-slide-up delay-50">
+    <button class="carousel-btn left" onclick="scrollCarousel(-1)" aria-label="Previous">
+      <i data-lucide="chevron-left"></i>
+    </button>
+    <div class="services-carousel" id="servicesCarousel"></div>
+    <button class="carousel-btn right" onclick="scrollCarousel(1)" aria-label="Next">
+      <i data-lucide="chevron-right"></i>
+    </button>
+  </div>
+
+  <div class="we-care-section animate-slide-up delay-100">
+    <div class="we-care-card">
+      <img src="photos/home.jpg" alt="Home Care" class="we-care-bg"
+           onerror="this.src='https://placehold.co/600x400/0369A1/FFF?text=Home+Care+Services'">
+      <div class="we-care-overlay">
+        <span class="we-care-badge"><i data-lucide="home"></i> Premium Service</span>
+        <h2>We Care You.</h2>
+        <p>Experience world-class physiotherapy from the comfort of your home. Compassionate care, fully tailored for your recovery.</p>
+        <button class="btn-glass" onclick="openModal('appointment-modal')">
+          <i data-lucide="calendar-plus"></i> Book Home Care
+        </button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<nav class="bottom-nav" aria-label="Primary navigation">
+  <a onclick="openModal('appointment-modal'); setActiveNav(this)" class="nav-item">
+    <i data-lucide="calendar-plus"></i><span>Book</span>
+  </a>
+  <a onclick="openModal('payment-modal'); setActiveNav(this)" class="nav-item">
+    <i data-lucide="credit-card"></i><span>Pay</span>
+  </a>
+  <div class="nav-fab-wrapper">
+    <a onclick="closeAllModals(); setActiveNav(document.getElementById('nav-dummy-home'))" class="nav-fab" aria-label="Home">
+      <i data-lucide="heart-pulse" class="heart-anim"></i>
+    </a>
+    <span id="nav-dummy-home" class="nav-item active" style="display:none"></span>
+  </div>
+  <a onclick="openModal('branch-modal'); setActiveNav(this)" class="nav-item">
+    <i data-lucide="map-pin"></i><span>Branches</span>
+  </a>
+  <a href="tel:+919744902555" class="nav-item">
+    <i data-lucide="phone-call"></i><span>Call</span>
+  </a>
+</nav>
+
+<!-- Dynamic modal host -->
+<div id="modal-host"></div>
+
+<!-- Sidebar -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+<aside class="sidebar" id="sidebar" aria-label="Menu">
+  <div class="sidebar-header">
+    <div class="brand">
+      <img src="assets/logo.png" alt="" class="logo">
+      <img src="assets/name.png" alt="STRA CARE" class="name">
+    </div>
+    <button class="icon-btn" onclick="toggleSidebar()" aria-label="Close"><i data-lucide="x"></i></button>
+  </div>
+  <ul class="sidebar-menu">
+    <li><button onclick="toggleSidebar();openModal('appointment-modal')"><i data-lucide="calendar-plus" class="icon-main"></i>Appointment</button></li>
+    <li><button onclick="toggleSidebar();openModal('payment-modal')"><i data-lucide="credit-card" class="icon-main"></i>Pay Online</button></li>
+    <li><button onclick="toggleSidebar();openModal('branch-modal')"><i data-lucide="map-pin" class="icon-main"></i>Clinic Branches</button></li>
+    <li><button onclick="installApp()"><i data-lucide="download" class="icon-main"></i>Install App</button></li>
+    <li><a href="https://share.google/lyiPHUz6CFLNwzPyC" target="_blank" rel="noopener"><i data-lucide="star" class="icon-main"></i>Google Review</a></li>
+    <li><button onclick="toggleSidebar();openModal('privacy-modal')"><i data-lucide="shield-check" class="icon-main"></i>Privacy & Policy</button></li>
+    <li><button onclick="toggleSidebar();openModal('app-info-modal')"><i data-lucide="info" class="icon-main"></i>App Info</button></li>
+  </ul>
+</aside>
+
+</div>
+
+<script type="module" src="firebase/firebase-auth.js"></script>
+<script type="module" src="js/app.js"></script>\n<script src="js/sw-register.js"></script>
+</body>
+</html>
