@@ -1,169 +1,178 @@
 import { ensureAnonymousAuth } from "../firebase/firebase-auth.js";
 
+
 /* =========================================================
-   STRA CARE PUBLIC BOOKING APP
-   Firebase / Firestore compatible with existing Admin App
-   ========================================================= */
+   STRA CARE PUBLIC BOOKING
+   PUBLIC BOOKINGS ARE SAVED SEPARATELY
+
+   Firestore:
+   appointments-public
+
+   Existing admin appointments collection is NOT touched.
+========================================================= */
+
 
 /* =========================================================
    SERVICES
-   ========================================================= */
+========================================================= */
 
 const SERVICES = [
+
   [
     "disc",
     "Intervertebral Disc Prolapse",
     "photos/1.png",
     "Specialized care for spinal disc issues, focusing on pain relief and restoring spine health."
   ],
+
   [
     "back",
     "Low Back Ache",
     "photos/2.jpg",
     "Targeted physiotherapy to alleviate chronic and acute lower back pain effectively."
   ],
+
   [
     "cervical",
     "Cervical Spondylosis",
     "photos/3.jpg",
     "Comprehensive neck pain management and posture correction techniques."
   ],
+
   [
     "knee",
     "Osteoarthritis of Knee",
     "photos/4.jpg",
     "Mobility improvement and pain reduction for knee joint degeneration."
   ],
+
   [
     "shoulder",
     "Periarthritis of Shoulder",
     "photos/5.jpg",
     "Therapies designed to restore range of motion and treat frozen shoulder."
   ],
+
   [
     "elbow",
     "Tennis Elbow",
     "photos/6.jpg",
     "Effective rehabilitation for elbow joint inflammation and strain injuries."
   ],
+
   [
     "heel",
     "Plantar Fasciitis",
     "photos/7.jpg",
     "Advanced care for heel pain to help you walk comfortably again."
   ],
+
   [
     "sports",
     "Sports Injuries",
     "photos/8.jpg",
     "Dedicated sports rehabilitation to get athletes back to their peak performance."
   ],
+
   [
     "stroke",
     "Stroke Rehabilitation",
     "photos/9.jpg",
     "Neurological physiotherapy to aid in balance, mobility, and motor recovery."
   ],
+
   [
     "cp",
     "Cerebral Palsy",
     "photos/10.jpg",
     "Paediatric therapy ensuring physical development and muscle control."
   ],
+
   [
     "bells",
     "Bell's Palsy",
     "photos/11.jpg",
     "Facial nerve rehabilitation utilizing specialized stimulation and exercises."
   ]
+
 ];
+
 
 /* =========================================================
    BRANCHES
-   Compatible with existing admin branch records
-   ========================================================= */
+
+   EXACT DISPLAY NAMES REQUESTED
+========================================================= */
 
 const BRANCHES = [
-  [
-    "Home Care",
-    "Physiotherapy at your location",
-    "theracare555physio@gmail.com",
-    "+919744902555",
-    ""
-  ],
-  [
-    "Mahe",
-    "stracare555@gmail.com",
-    "",
-    "+918590243951",
-    "https://www.google.com/maps/search/?api=1&query=Mahe"
-  ],
-  [
-    "Pallikkuni",
-    "Stracare555@gmail.com",
-    "",
-    "+917306962564",
-    "https://www.google.com/maps/search/?api=1&query=Pallikkuni"
-  ],
-  [
-    "Panoor",
-    "Stracare555@gmail.com",
-    "",
-    "+917306813576",
-    "https://www.google.com/maps/search/?api=1&query=Panoor"
-  ],
-  [
-    "Stracare",
-    "Stracare555@gmail.com",
-    "",
-    "+919895972836",
-    "https://www.google.com/maps/search/?api=1&query=Stracare"
-  ],
-  [
-    "Thuneri",
-    "theracare555physio@gmail.com",
-    "",
-    "+916282088672",
-    "https://www.google.com/maps/search/?api=1&query=Thuneri"
-  ]
+
+  {
+    id: "1",
+    name: "1.AZHIYUR",
+    phone: "",
+    email: "",
+    map: "https://www.google.com/maps/search/?api=1&query=Azhiyur",
+    homeCare: false
+  },
+
+  {
+    id: "2",
+    name: "2.PALLIKKUNI",
+    phone: "+917306962564",
+    email: "Stracare555@gmail.com",
+    map: "https://www.google.com/maps/search/?api=1&query=Pallikkuni",
+    homeCare: false
+  },
+
+  {
+    id: "3",
+    name: "3.ARAYAKOOL",
+    phone: "",
+    email: "",
+    map: "https://www.google.com/maps/search/?api=1&query=Arayakool",
+    homeCare: false
+  },
+
+  {
+    id: "4",
+    name: "4.KOTTAYAMPOYIL",
+    phone: "",
+    email: "",
+    map: "https://www.google.com/maps/search/?api=1&query=Kottayampoyil",
+    homeCare: false
+  },
+
+  {
+    id: "5",
+    name: "5.TUNERI",
+    phone: "+916282088672",
+    email: "theracare555physio@gmail.com",
+    map: "https://www.google.com/maps/search/?api=1&query=Thuneri",
+    homeCare: false
+  },
+
+  {
+    id: "6",
+    name: "6.HOME CARE",
+    phone: "+919744902555",
+    email: "theracare555physio@gmail.com",
+    map: "",
+    homeCare: true
+  }
+
 ];
 
+
 /* =========================================================
-   GLOBAL STATE
-   ========================================================= */
+   GLOBAL
+========================================================= */
 
 let bookingSubmitting = false;
-let firebaseReady = false;
+
 
 /* =========================================================
-   INITIALIZE FIREBASE
-   ========================================================= */
-
-async function prepareFirebase() {
-  try {
-    if (!window.SC_FIREBASE) {
-      console.error("SC_FIREBASE is not available.");
-      return null;
-    }
-
-    const user = await ensureAnonymousAuth();
-
-    firebaseReady = true;
-
-    return user;
-
-  } catch (error) {
-    firebaseReady = false;
-
-    console.error("Firebase authentication failed:", error);
-
-    return null;
-  }
-}
-
-/* =========================================================
-   MODAL RENDERING
-   ========================================================= */
+   MODAL RENDER
+========================================================= */
 
 function renderModal(id) {
 
@@ -171,43 +180,68 @@ function renderModal(id) {
     return;
   }
 
-  const host = document.getElementById("modal-host");
+
+  const host =
+    document.getElementById("modal-host");
+
 
   if (!host) {
     console.error("modal-host not found.");
     return;
   }
 
-  const wrapper = document.createElement("section");
+
+  const wrapper =
+    document.createElement("section");
+
 
   wrapper.id = id;
+
   wrapper.className = "fs-modal";
 
-  wrapper.innerHTML = modalContent(id);
+
+  wrapper.innerHTML =
+    modalContent(id);
+
 
   host.appendChild(wrapper);
 
+
   refreshIcons();
+
 
   if (id === "appointment-modal") {
     initAppointmentForm();
   }
+
+
+  if (id === "search-modal") {
+    initMasterSearch();
+  }
+
 }
+
 
 /* =========================================================
    MODAL CONTENT
-   ========================================================= */
+========================================================= */
 
 function modalContent(id) {
+
+
+  /* -------------------------------------------------------
+     APPOINTMENT
+  ------------------------------------------------------- */
 
   if (id === "appointment-modal") {
 
     return `
+
       <div class="modal-header">
 
         <h2>
           <i data-lucide="calendar-plus"></i>
-          Appointment
+          Book Appointment
         </h2>
 
         <button
@@ -221,6 +255,7 @@ function modalContent(id) {
 
       </div>
 
+
       <div class="modal-body">
 
         <div class="form-header-card">
@@ -231,21 +266,29 @@ function modalContent(id) {
           </h3>
 
           <p>
-            Please enter the exact details of the patient receiving treatment.
+            Submit your appointment request.
+            STRA CARE will review and confirm your booking.
           </p>
 
         </div>
 
+
         ${appointmentForm()}
 
       </div>
+
     `;
   }
 
 
+  /* -------------------------------------------------------
+     PAYMENT
+  ------------------------------------------------------- */
+
   if (id === "payment-modal") {
 
     return `
+
       <div class="modal-header">
 
         <h2>
@@ -263,11 +306,15 @@ function modalContent(id) {
 
       </div>
 
+
       <div class="modal-body">
 
         <div class="qr-card">
 
-          <h3>Scan to Pay via UPI</h3>
+          <h3>
+            Scan to Pay via UPI
+          </h3>
+
 
           <div class="qr-code">
 
@@ -278,29 +325,37 @@ function modalContent(id) {
 
           </div>
 
+
           <p>
             UPI ID:
             <strong>Q30454120@ybl</strong>
           </p>
 
+
           <div class="bank-details">
 
-            <h4>Bank Transfer Details</h4>
+            <h4>
+              Bank Transfer Details
+            </h4>
+
 
             <div class="bank-row">
               <span>Account Name:</span>
               <span>STRA CARE</span>
             </div>
 
+
             <div class="bank-row">
               <span>Account No:</span>
               <span>50200120597389</span>
             </div>
 
+
             <div class="bank-row">
               <span>IFSC Code:</span>
               <span>HDFC0000465</span>
             </div>
+
 
             <div class="bank-row">
               <span>Bank Name:</span>
@@ -312,58 +367,84 @@ function modalContent(id) {
         </div>
 
       </div>
+
     `;
   }
 
 
+  /* -------------------------------------------------------
+     BRANCHES
+  ------------------------------------------------------- */
+
   if (id === "branch-modal") {
 
     return `
+
       <div class="modal-header">
 
         <h2>
+
           <i data-lucide="map-pin"></i>
+
           Our Branches
+
         </h2>
+
 
         <button
           class="icon-btn"
           type="button"
           onclick="closeAllModals()"
         >
+
           <i data-lucide="x"></i>
+
         </button>
 
       </div>
+
 
       <div class="modal-body">
 
         ${BRANCHES.map(branchCard).join("")}
 
       </div>
+
     `;
   }
 
 
+  /* -------------------------------------------------------
+     SEARCH
+  ------------------------------------------------------- */
+
   if (id === "search-modal") {
 
     return `
+
       <div class="modal-header">
 
         <h2>
+
           <i data-lucide="search"></i>
-          Master Search
+
+          Search
+
         </h2>
+
 
         <button
           class="icon-btn"
           type="button"
           onclick="closeAllModals()"
         >
+
           <i data-lucide="x"></i>
+
         </button>
 
       </div>
+
 
       <div class="modal-body">
 
@@ -374,39 +455,52 @@ function modalContent(id) {
           autocomplete="off"
         >
 
+
         <div id="searchResults">
 
           <p style="color:var(--text-muted)">
-            Start typing to search our physiotherapy services,
-            branch details, and general health info.
+            Start typing to search.
           </p>
 
         </div>
 
       </div>
+
     `;
   }
 
 
+  /* -------------------------------------------------------
+     APP INFO
+  ------------------------------------------------------- */
+
   if (id === "app-info-modal") {
 
     return `
+
       <div class="modal-header">
 
         <h2>
+
           <i data-lucide="info"></i>
+
           App Info
+
         </h2>
+
 
         <button
           class="icon-btn"
           type="button"
           onclick="closeAllModals()"
         >
+
           <i data-lucide="x"></i>
+
         </button>
 
       </div>
+
 
       <div class="modal-body">
 
@@ -424,24 +518,32 @@ function modalContent(id) {
             "
           >
 
+
           <h2 style="margin:14px 0 4px">
             STRA CARE
           </h2>
+
 
           <p style="color:var(--text-muted)">
             Booking App Version 1.0
           </p>
 
+
           <button
             class="btn-primary"
             onclick="installApp()"
             style="margin-top:20px"
+            type="button"
           >
+
             <i data-lucide="download"></i>
+
             Install Booking App
+
           </button>
 
         </div>
+
 
         <div
           style="
@@ -469,68 +571,92 @@ function modalContent(id) {
         </div>
 
       </div>
+
     `;
   }
 
 
+  /* -------------------------------------------------------
+     PRIVACY
+  ------------------------------------------------------- */
+
   if (id === "privacy-modal") {
 
     return `
+
       <div class="modal-header">
 
         <h2>
+
           <i data-lucide="shield-check"></i>
+
           Privacy & Policy
+
         </h2>
+
 
         <button
           class="icon-btn"
           type="button"
           onclick="closeAllModals()"
         >
+
           <i data-lucide="x"></i>
+
         </button>
 
       </div>
+
 
       <div class="modal-body">
 
         <h3>Privacy</h3>
 
         <p>
-          Your booking details are used for appointment processing
-          and communication with STRA CARE.
+          Your booking details are used for appointment
+          processing and communication with STRA CARE.
         </p>
+
 
         <h3>Data</h3>
 
         <p>
-          Only information required for booking and service delivery
-          should be submitted.
+          Only information required for booking and
+          service delivery should be submitted.
         </p>
+
 
         <h3>Payments</h3>
 
         <p>
-          Payment is handled through the UPI/payment method
-          presented in the app.
+          Payment is handled through the UPI/payment
+          method presented in the app.
         </p>
 
       </div>
+
     `;
   }
 
+
   return "";
+
 }
+
 
 /* =========================================================
    APPOINTMENT FORM
-   ========================================================= */
+========================================================= */
 
 function appointmentForm() {
 
   return `
-    <form id="appointmentForm" novalidate>
+
+    <form
+      id="appointmentForm"
+      novalidate
+    >
+
 
       <div class="form-section-title">
         Personal Information
@@ -543,6 +669,7 @@ function appointmentForm() {
           Contact Phone Number
           <span style="color:red">*</span>
         </label>
+
 
         <input
           type="tel"
@@ -565,11 +692,12 @@ function appointmentForm() {
           <span style="color:red">*</span>
         </label>
 
+
         <input
           type="text"
           id="pat_name"
           class="form-control"
-          placeholder="e.g., John Doe"
+          placeholder="Patient full name"
           autocomplete="name"
           required
         >
@@ -579,9 +707,13 @@ function appointmentForm() {
 
       <div class="form-row">
 
+
         <div class="form-group">
 
-          <label>Age *</label>
+          <label>
+            Age *
+          </label>
+
 
           <input
             type="number"
@@ -598,7 +730,10 @@ function appointmentForm() {
 
         <div class="form-group">
 
-          <label>Gender *</label>
+          <label>
+            Gender *
+          </label>
+
 
           <select
             id="pat_gender"
@@ -606,17 +741,24 @@ function appointmentForm() {
             required
           >
 
-            <option value="" disabled selected>
+            <option
+              value=""
+              disabled
+              selected
+            >
               Select
             </option>
+
 
             <option value="Male">
               Male
             </option>
 
+
             <option value="Female">
               Female
             </option>
+
 
             <option value="Other">
               Other
@@ -640,6 +782,7 @@ function appointmentForm() {
           Patient Address / Location *
         </label>
 
+
         <textarea
           id="pat_address"
           class="form-control"
@@ -661,9 +804,10 @@ function appointmentForm() {
 
           <i data-lucide="map-pin"></i>
 
-          Auto-Detect My Location
+          Detect My Location
 
         </button>
+
 
         <p
           id="location-status"
@@ -674,10 +818,12 @@ function appointmentForm() {
           "
         ></p>
 
+
         <input
           type="hidden"
           id="lat_val"
         >
+
 
         <input
           type="hidden"
@@ -698,6 +844,7 @@ function appointmentForm() {
           Symptoms / Service Needed *
         </label>
 
+
         <select
           id="pat_symptom"
           class="form-control"
@@ -713,6 +860,7 @@ function appointmentForm() {
             Select an issue or service...
           </option>
 
+
           ${SERVICES.map(
             s => `
               <option value="${escapeHtml(s[1])}">
@@ -721,9 +869,11 @@ function appointmentForm() {
             `
           ).join("")}
 
+
           <option value="Home Care Physiotherapy">
             Home Care Physiotherapy
           </option>
+
 
           <option value="Other">
             Other
@@ -749,6 +899,7 @@ function appointmentForm() {
           Select Branch *
         </label>
 
+
         <select
           id="pat_branch"
           class="form-control"
@@ -763,10 +914,14 @@ function appointmentForm() {
             Select branch...
           </option>
 
+
           ${BRANCHES.map(
             b => `
-              <option value="${escapeHtml(b[0])}">
-                ${escapeHtml(b[0])}
+              <option
+                value="${escapeHtml(b.name)}"
+                data-branch-id="${escapeAttr(b.id)}"
+              >
+                ${escapeHtml(b.name)}
               </option>
             `
           ).join("")}
@@ -778,11 +933,13 @@ function appointmentForm() {
 
       <div class="form-row">
 
+
         <div class="form-group">
 
           <label>
             Preferred Date *
           </label>
+
 
           <input
             type="date"
@@ -800,10 +957,13 @@ function appointmentForm() {
             Preferred Time *
           </label>
 
+
           <input
             type="time"
             id="pat_time"
             class="form-control"
+            min="08:00"
+            max="20:00"
             required
           >
 
@@ -815,8 +975,9 @@ function appointmentForm() {
       <div class="form-group">
 
         <label>
-          Brief Medical History / Notes (Optional)
+          Patient Comments / Notes
         </label>
+
 
         <textarea
           id="pat_notes"
@@ -836,7 +997,7 @@ function appointmentForm() {
 
         <i data-lucide="check-circle"></i>
 
-        Proceed to Submit
+        Submit Booking Request
 
       </button>
 
@@ -850,22 +1011,36 @@ function appointmentForm() {
         "
       ></p>
 
+
     </form>
+
   `;
 }
 
+
 /* =========================================================
    BRANCH CARD
-   ========================================================= */
+========================================================= */
 
-function branchCard(b, i) {
+function branchCard(branch) {
 
-  const isHome = i === 0;
+  const hasPhone =
+    Boolean(branch.phone);
+
+
+  const isHome =
+    branch.homeCare === true;
+
 
   return `
-    <div class="branch-card ${isHome ? "premium" : ""}">
+
+    <div
+      class="branch-card ${isHome ? "premium" : ""}"
+    >
+
 
       <div class="branch-header">
+
 
         <div class="branch-icon">
 
@@ -875,21 +1050,23 @@ function branchCard(b, i) {
 
         </div>
 
+
         <div class="branch-card-info">
 
           <h3>
-            ${escapeHtml(b[0])}
+            ${escapeHtml(branch.name)}
           </h3>
 
-          <p>
-            ${escapeHtml(b[1])}
 
-            <br>
-
-            <small>
-              ${escapeHtml(b[2] || "")}
-            </small>
-          </p>
+          ${
+            branch.email
+              ? `
+                <p>
+                  ${escapeHtml(branch.email)}
+                </p>
+              `
+              : ""
+          }
 
         </div>
 
@@ -898,24 +1075,31 @@ function branchCard(b, i) {
 
       <div class="branch-actions">
 
-        <a
-          href="tel:${escapeAttr(b[3])}"
-          class="b-btn call"
-        >
-          <i data-lucide="phone"></i>
-          Call
-        </a>
+
+        ${
+          hasPhone
+            ? `
+              <a
+                href="tel:${escapeAttr(branch.phone)}"
+                class="b-btn call"
+              >
+                <i data-lucide="phone"></i>
+                Call
+              </a>
 
 
-        <a
-          href="https://wa.me/${String(b[3]).replace(/\+/g, "")}"
-          target="_blank"
-          rel="noopener"
-          class="b-btn wa"
-        >
-          <i class="fa-brands fa-whatsapp"></i>
-          Chat
-        </a>
+              <a
+                href="https://wa.me/${String(branch.phone).replace(/\+/g, "")}"
+                target="_blank"
+                rel="noopener"
+                class="b-btn wa"
+              >
+                <i class="fa-brands fa-whatsapp"></i>
+                Chat
+              </a>
+            `
+            : ""
+        }
 
 
         ${
@@ -924,7 +1108,10 @@ function branchCard(b, i) {
             ? `
               <a
                 href="javascript:void(0)"
-                onclick="closeAllModals();openModal('appointment-modal')"
+                onclick="
+                  closeAllModals();
+                  openModal('appointment-modal')
+                "
                 class="b-btn map"
               >
                 <i data-lucide="calendar"></i>
@@ -934,7 +1121,7 @@ function branchCard(b, i) {
 
             : `
               <a
-                href="${escapeAttr(b[4])}"
+                href="${escapeAttr(branch.map)}"
                 target="_blank"
                 rel="noopener"
                 class="b-btn map"
@@ -948,100 +1135,130 @@ function branchCard(b, i) {
       </div>
 
     </div>
+
   `;
 }
 
+
 /* =========================================================
    SERVICES
-   ========================================================= */
+========================================================= */
 
 function renderServices() {
 
-  const el = document.getElementById("servicesCarousel");
+  const el =
+    document.getElementById("servicesCarousel");
+
 
   if (!el) {
     return;
   }
 
-  el.innerHTML = SERVICES.map(
-    s => `
-      <div
-        class="service-card"
-        onclick="
-          openServiceDetails(
-            '${escapeAttr(s[0])}',
-            '${escapeAttr(s[1])}',
-            '${escapeAttr(s[2])}',
-            '${escapeAttr(s[3])}'
-          )
-        "
-      >
 
-        <div class="service-photo">
+  el.innerHTML =
+    SERVICES.map(
+      s => `
 
-          <img
-            src="${escapeAttr(s[2])}"
-            alt="${escapeAttr(s[1])}"
-            loading="lazy"
-            onerror="
-              this.src='https://placehold.co/400x300/0369A1/FFF?text=Service'
-            "
-          >
+        <div
+          class="service-card"
+          onclick="
+            openServiceDetails(
+              '${escapeAttr(s[0])}',
+              '${escapeAttr(s[1])}',
+              '${escapeAttr(s[2])}',
+              '${escapeAttr(s[3])}'
+            )
+          "
+        >
+
+
+          <div class="service-photo">
+
+            <img
+              src="${escapeAttr(s[2])}"
+              alt="${escapeAttr(s[1])}"
+              loading="lazy"
+              onerror="
+                this.src='https://placehold.co/400x300/0369A1/FFF?text=Service'
+              "
+            >
+
+          </div>
+
+
+          <div class="service-info">
+
+            <h3>
+              ${escapeHtml(s[1])}
+            </h3>
+
+
+            <i data-lucide="info"></i>
+
+          </div>
 
         </div>
 
-        <div class="service-info">
+      `
+    ).join("");
 
-          <h3>
-            ${escapeHtml(s[1])}
-          </h3>
-
-          <i data-lucide="info"></i>
-
-        </div>
-
-      </div>
-    `
-  ).join("");
 
   refreshIcons();
+
 }
 
+
 /* =========================================================
-   APPOINTMENT INITIALIZATION
-   ========================================================= */
+   FORM INITIALIZATION
+========================================================= */
 
 function initAppointmentForm() {
 
-  const form = document.getElementById("appointmentForm");
+  const form =
+    document.getElementById("appointmentForm");
+
 
   if (!form) {
     return;
   }
 
-  const date = document.getElementById("pat_date");
+
+  const date =
+    document.getElementById("pat_date");
+
 
   if (date) {
 
-    const today = getLocalDateString();
+    const today =
+      getLocalDateString();
 
-    date.min = today;
+
+    date.min =
+      today;
+
 
     if (!date.value) {
       date.value = today;
     }
+
   }
 
 
-  const mobile = document.getElementById("pat_mobile");
+  const mobile =
+    document.getElementById("pat_mobile");
 
-  mobile?.addEventListener("input", function () {
 
-    this.value = this.value
-      .replace(/\D/g, "")
-      .slice(0, 10);
+  mobile?.addEventListener(
+    "input",
+    function () {
 
-  });
+      this.value =
+        this.value
+          .replace(/\D/g, "")
+          .slice(0, 10);
+
+    }
+  );
 
 
   form.addEventListener(
@@ -1061,32 +1278,42 @@ function initAppointmentForm() {
 
 
   refreshIcons();
+
 }
 
+
 /* =========================================================
-   LOCAL DATE
-   ========================================================= */
+   DATE
+========================================================= */
 
 function getLocalDateString() {
 
-  const d = new Date();
+  const d =
+    new Date();
 
-  const year = d.getFullYear();
 
-  const month = String(
-    d.getMonth() + 1
-  ).padStart(2, "0");
+  const year =
+    d.getFullYear();
 
-  const day = String(
-    d.getDate()
-  ).padStart(2, "0");
+
+  const month =
+    String(d.getMonth() + 1)
+      .padStart(2, "0");
+
+
+  const day =
+    String(d.getDate())
+      .padStart(2, "0");
+
 
   return `${year}-${month}-${day}`;
+
 }
+
 
 /* =========================================================
    SUBMIT BOOKING
-   ========================================================= */
+========================================================= */
 
 async function submitBooking() {
 
@@ -1094,28 +1321,70 @@ async function submitBooking() {
     return;
   }
 
-  const get = id => {
 
-    const el = document.getElementById(id);
+  const get =
+    id => {
 
-    return el?.value?.trim() || "";
+      const el =
+        document.getElementById(id);
 
-  };
+      return (
+        el?.value?.trim() || ""
+      );
+
+    };
 
 
-  const patientName = get("pat_name");
-  const phone = get("pat_mobile");
-  const age = get("pat_age");
-  const gender = get("pat_gender");
-  const address = get("pat_address");
-  const selectedSymptom = get("pat_symptom");
-  const customSymptom = get("pat_symptom_custom");
-  const branch = get("pat_branch");
-  const date = get("pat_date");
-  const time = get("pat_time");
-  const notes = get("pat_notes");
-  const lat = get("lat_val");
-  const lng = get("lng_val");
+  const patientName =
+    get("pat_name");
+
+
+  const phone =
+    get("pat_mobile");
+
+
+  const age =
+    get("pat_age");
+
+
+  const gender =
+    get("pat_gender");
+
+
+  const address =
+    get("pat_address");
+
+
+  const selectedSymptom =
+    get("pat_symptom");
+
+
+  const customSymptom =
+    get("pat_symptom_custom");
+
+
+  const branch =
+    get("pat_branch");
+
+
+  const date =
+    get("pat_date");
+
+
+  const time =
+    get("pat_time");
+
+
+  const notes =
+    get("pat_notes");
+
+
+  const lat =
+    get("lat_val");
+
+
+  const lng =
+    get("lng_val");
 
 
   const symptom =
@@ -1124,13 +1393,15 @@ async function submitBooking() {
       : selectedSymptom;
 
 
-  /* ---------------------------------------------
+  /* -------------------------------------------------------
      VALIDATION
-     --------------------------------------------- */
+  ------------------------------------------------------- */
 
   if (!patientName) {
 
-    alert("Please enter the patient's full name.");
+    alert(
+      "Please enter the patient's full name."
+    );
 
     return;
   }
@@ -1138,7 +1409,9 @@ async function submitBooking() {
 
   if (!/^[0-9]{10}$/.test(phone)) {
 
-    alert("Please enter a valid 10-digit mobile number.");
+    alert(
+      "Please enter a valid 10-digit mobile number."
+    );
 
     return;
   }
@@ -1150,7 +1423,9 @@ async function submitBooking() {
     Number(age) > 120
   ) {
 
-    alert("Please enter a valid patient age.");
+    alert(
+      "Please enter a valid patient age."
+    );
 
     return;
   }
@@ -1158,7 +1433,9 @@ async function submitBooking() {
 
   if (!gender) {
 
-    alert("Please select gender.");
+    alert(
+      "Please select gender."
+    );
 
     return;
   }
@@ -1166,7 +1443,9 @@ async function submitBooking() {
 
   if (!address) {
 
-    alert("Please enter the patient address/location.");
+    alert(
+      "Please enter the patient address/location."
+    );
 
     return;
   }
@@ -1174,7 +1453,9 @@ async function submitBooking() {
 
   if (!symptom) {
 
-    alert("Please select or enter the service required.");
+    alert(
+      "Please select or enter the service required."
+    );
 
     return;
   }
@@ -1182,7 +1463,9 @@ async function submitBooking() {
 
   if (!branch) {
 
-    alert("Please select a branch.");
+    alert(
+      "Please select a branch."
+    );
 
     return;
   }
@@ -1190,7 +1473,9 @@ async function submitBooking() {
 
   if (!date) {
 
-    alert("Please select the preferred date.");
+    alert(
+      "Please select the preferred date."
+    );
 
     return;
   }
@@ -1198,87 +1483,215 @@ async function submitBooking() {
 
   if (!time) {
 
-    alert("Please select the preferred time.");
+    alert(
+      "Please select the preferred time."
+    );
 
     return;
   }
 
 
-  /* ---------------------------------------------
-     BUILD PAYLOAD
-     --------------------------------------------- */
+  /* -------------------------------------------------------
+     TIME VALIDATION
+  ------------------------------------------------------- */
+
+  if (
+    time < "08:00" ||
+    time > "20:00"
+  ) {
+
+    alert(
+      "Please select a time between 8:00 AM and 8:00 PM."
+    );
+
+    return;
+  }
+
+
+  /* -------------------------------------------------------
+     PREVENT PAST TIME FOR TODAY
+  ------------------------------------------------------- */
+
+  const today =
+    getLocalDateString();
+
+
+  if (date === today) {
+
+    const now =
+      new Date();
+
+
+    const currentMinutes =
+      now.getHours() * 60 +
+      now.getMinutes();
+
+
+    const selectedParts =
+      time.split(":");
+
+
+    const selectedMinutes =
+      Number(selectedParts[0]) * 60 +
+      Number(selectedParts[1]);
+
+
+    if (
+      selectedMinutes <= currentMinutes
+    ) {
+
+      alert(
+        "Please select a future time."
+      );
+
+      return;
+    }
+
+  }
+
+
+  /* -------------------------------------------------------
+     BRANCH OBJECT
+  ------------------------------------------------------- */
+
+  const branchObject =
+    BRANCHES.find(
+      b => b.name === branch
+    );
+
+
+  /* -------------------------------------------------------
+     BOOKING REFERENCE
+  ------------------------------------------------------- */
 
   const bookingRef =
-    "APT-" +
-    Date.now()
-      .toString()
-      .slice(-6);
+    "SC-" +
+    date.replace(/-/g, "") +
+    "-" +
+    Math.random()
+      .toString(36)
+      .substring(2, 8)
+      .toUpperCase();
 
+
+  /* -------------------------------------------------------
+     PUBLIC BOOKING PAYLOAD
+  ------------------------------------------------------- */
 
   const payload = {
 
-    /*
-     * Existing Admin Appointment compatible fields
-     */
+    /* Public-booking fields */
 
-    patientName: patientName,
+    name:
+      patientName,
 
-    phone: phone,
+    mobile:
+      phone,
 
-    age: String(age),
+    age:
+      String(age),
 
-    gender: gender,
+    sex:
+      gender,
 
-    address: address,
+    patientComments:
+      notes,
 
-    symptom: symptom,
+    address:
+      address,
 
-    branch: branch,
+    latitude:
+      lat || "",
 
-    date: date,
+    longitude:
+      lng || "",
 
-    time: time,
+    branch:
+      branch,
 
-    notes: notes,
+    branchId:
+      branchObject?.id || "",
 
-    lat: lat || "",
+    service:
+      symptom,
 
-    lng: lng || "",
+    date:
+      date,
 
-    status: "pending",
+    time:
+      time,
 
-    bookingRef: bookingRef,
 
-    source: "public_booking",
+    /* Existing appointment-compatible fields */
 
-    category: "Normal",
+    patientName:
+      patientName,
 
-    createdAt: null
+    phone:
+      phone,
+
+    gender:
+      gender,
+
+    symptom:
+      symptom,
+
+    notes:
+      notes,
+
+
+    /* Workflow */
+
+    status:
+      "pending",
+
+    bookingRef:
+      bookingRef,
+
+    source:
+      "public_booking",
+
+    category:
+      "Normal",
+
+    appointmentStatus:
+      "Pending Review"
 
   };
 
 
-  /* ---------------------------------------------
-     UI LOCK
-     --------------------------------------------- */
+  /* -------------------------------------------------------
+     UI
+  ------------------------------------------------------- */
 
   const btn =
-    document.getElementById("submitAppBtn");
+    document.getElementById(
+      "submitAppBtn"
+    );
+
 
   const status =
-    document.getElementById("statusMsg");
+    document.getElementById(
+      "statusMsg"
+    );
 
 
-  bookingSubmitting = true;
+  bookingSubmitting =
+    true;
 
 
   if (btn) {
 
-    btn.disabled = true;
+    btn.disabled =
+      true;
+
 
     btn.innerHTML = `
+
       <i class="fa-solid fa-spinner fa-spin"></i>
-      Processing Booking...
+
+      Submitting Booking...
+
     `;
 
   }
@@ -1287,7 +1700,8 @@ async function submitBooking() {
   if (status) {
 
     status.textContent =
-      "Submitting your appointment...";
+      "Securely submitting your booking request...";
+
 
     status.style.color =
       "var(--text-muted)";
@@ -1297,9 +1711,9 @@ async function submitBooking() {
 
   try {
 
-    /* -------------------------------------------
-       FIREBASE AUTH
-       ------------------------------------------- */
+    /* -----------------------------------------------------
+       AUTH
+    ----------------------------------------------------- */
 
     const user =
       await ensureAnonymousAuth();
@@ -1314,9 +1728,9 @@ async function submitBooking() {
     }
 
 
-    /* -------------------------------------------
-       FIREBASE OBJECT
-       ------------------------------------------- */
+    /* -----------------------------------------------------
+       FIREBASE
+    ----------------------------------------------------- */
 
     const firebase =
       window.SC_FIREBASE;
@@ -1353,28 +1767,33 @@ async function submitBooking() {
     }
 
 
-    /* -------------------------------------------
-       EXISTING COLLECTION
-       ------------------------------------------- */
+    /* -----------------------------------------------------
+       IMPORTANT:
+       NEW PUBLIC COLLECTION
+    ----------------------------------------------------- */
 
-    const appointmentsRef =
+    const publicBookingsRef =
       collection(
         db,
-        "appointments"
+        "appointments-public"
       );
 
 
-    /* -------------------------------------------
+    /* -----------------------------------------------------
        SAVE
-       ------------------------------------------- */
+    ----------------------------------------------------- */
 
     const docData = {
 
       ...payload,
 
-      userId: user.uid,
+      userId:
+        user.uid,
 
       createdAt:
+        serverTimestamp(),
+
+      updatedAt:
         serverTimestamp()
 
     };
@@ -1382,25 +1801,25 @@ async function submitBooking() {
 
     const ref =
       await addDoc(
-        appointmentsRef,
+        publicBookingsRef,
         docData
       );
 
 
     console.log(
-      "Appointment successfully saved:",
+      "PUBLIC BOOKING SAVED:",
       ref.id
     );
 
 
-    /* -------------------------------------------
+    /* -----------------------------------------------------
        SUCCESS
-       ------------------------------------------- */
+    ----------------------------------------------------- */
 
     if (status) {
 
       status.textContent =
-        "Booking submitted successfully.";
+        "Booking request submitted successfully.";
 
       status.style.color =
         "#15803d";
@@ -1409,18 +1828,14 @@ async function submitBooking() {
 
 
     showBookingConfirmation({
-
-      ...payload,
-
-      bookingRef: bookingRef
-
+      ...payload
     });
 
 
   } catch (error) {
 
     console.error(
-      "BOOKING SAVE ERROR:",
+      "PUBLIC BOOKING ERROR:",
       error
     );
 
@@ -1432,77 +1847,66 @@ async function submitBooking() {
 
   } finally {
 
-    bookingSubmitting = false;
+    bookingSubmitting =
+      false;
 
 
     if (btn) {
 
-      btn.disabled = false;
+      btn.disabled =
+        false;
+
 
       btn.innerHTML = `
+
         <i data-lucide="check-circle"></i>
-        Proceed to Submit
+
+        Submit Booking Request
+
       `;
 
     }
 
+
     refreshIcons();
 
   }
+
 }
 
+
 /* =========================================================
-   FIREBASE ERROR HANDLER
-   ========================================================= */
+   FIREBASE ERROR
+========================================================= */
 
 function showFirebaseBookingError(error) {
 
   const code =
-    String(error?.code || "").toLowerCase();
+    String(
+      error?.code || ""
+    ).toLowerCase();
+
 
   const message =
-    String(error?.message || "").toLowerCase();
+    String(
+      error?.message || ""
+    ).toLowerCase();
 
 
-  let userMessage = "";
+  let userMessage =
+    "Unable to save your booking right now. Please try again or contact STRA CARE.";
 
-
-  /* ---------------------------------------------
-     QUOTA
-     --------------------------------------------- */
 
   if (
-    code.includes("resource-exhausted") ||
-    code.includes("quota") ||
-    message.includes("quota") ||
-    message.includes("resource exhausted") ||
-    message.includes("daily limit")
-  ) {
-
-    userMessage =
-      "Booking service is temporarily unavailable because the Firebase daily usage limit has been reached. Please try again later or contact STRA CARE directly.";
-
-  }
-
-
-  /* ---------------------------------------------
-     PERMISSION
-     --------------------------------------------- */
-
-  else if (
     code.includes("permission-denied") ||
     message.includes("permission")
   ) {
 
     userMessage =
-      "The booking service is currently unable to accept the request because of a Firebase permission setting. Please contact STRA CARE.";
+      "The public booking service is not permitted to save this request. Please contact STRA CARE.";
 
   }
 
-
-  /* ---------------------------------------------
-     AUTH
-     --------------------------------------------- */
 
   else if (
     code.includes("unauthenticated") ||
@@ -1510,14 +1914,10 @@ function showFirebaseBookingError(error) {
   ) {
 
     userMessage =
-      "Secure connection to the booking service could not be established. Please refresh the app and try again.";
+      "Secure connection to the booking service could not be established. Please refresh and try again.";
 
   }
 
-
-  /* ---------------------------------------------
-     NETWORK
-     --------------------------------------------- */
 
   else if (
     code.includes("unavailable") ||
@@ -1531,19 +1931,23 @@ function showFirebaseBookingError(error) {
   }
 
 
-  /* ---------------------------------------------
-     DEFAULT
-     --------------------------------------------- */
-
-  else {
+  else if (
+    code.includes("resource-exhausted") ||
+    code.includes("quota") ||
+    message.includes("quota") ||
+    message.includes("daily limit")
+  ) {
 
     userMessage =
-      "Unable to save your booking right now. Please try again or contact STRA CARE.";
+      "The booking service is temporarily unavailable. Please try again later or contact STRA CARE.";
+
   }
 
 
   const status =
-    document.getElementById("statusMsg");
+    document.getElementById(
+      "statusMsg"
+    );
 
 
   if (status) {
@@ -1560,53 +1964,44 @@ function showFirebaseBookingError(error) {
   alert(
     userMessage
   );
+
 }
 
+
 /* =========================================================
-   BOOKING CONFIRMATION
-   ========================================================= */
+   CONFIRMATION
+========================================================= */
 
 function showBookingConfirmation(p) {
 
-  const host =
-    document.getElementById("modal-host");
+  document
+    .getElementById("confirmation-popup")
+    ?.remove();
 
 
-  if (!host) {
-    return;
-  }
-
-
-  const old =
-    document.getElementById(
-      "confirmation-popup"
-    );
-
-
-  old?.remove();
-
-
-  const d =
+  const popup =
     document.createElement("div");
 
 
-  d.id =
+  popup.id =
     "confirmation-popup";
 
 
-  d.className =
+  popup.className =
     "popup-overlay active";
 
 
-  d.innerHTML = `
+  popup.innerHTML = `
 
     <div class="popup-content">
 
       <div class="popup-body">
 
+
         <h2>
-          Booking Submitted
+          Booking Request Submitted
         </h2>
+
 
         <p
           style="
@@ -1619,6 +2014,7 @@ function showBookingConfirmation(p) {
 
 
         <div class="ticket-box">
+
 
           <div class="ticket-header">
 
@@ -1651,6 +2047,7 @@ function showBookingConfirmation(p) {
 
             <span class="val">
               ${escapeHtml(p.date)}
+              &nbsp;
               ${escapeHtml(p.time)}
             </span>
 
@@ -1690,10 +2087,11 @@ function showBookingConfirmation(p) {
             </span>
 
             <span class="val">
-              Pending (Review)
+              Pending Review
             </span>
 
           </div>
+
 
         </div>
 
@@ -1706,9 +2104,11 @@ function showBookingConfirmation(p) {
           "
         >
 
+
           <button
             class="btn-primary"
             onclick="closeConfirmation()"
+            type="button"
           >
             Close
           </button>
@@ -1717,11 +2117,14 @@ function showBookingConfirmation(p) {
           <button
             class="btn-primary"
             onclick="downloadTicketJpeg()"
+            type="button"
           >
             Download JPEG
           </button>
 
+
         </div>
+
 
       </div>
 
@@ -1730,16 +2133,20 @@ function showBookingConfirmation(p) {
   `;
 
 
-  host.appendChild(d);
+  document.body.appendChild(
+    popup
+  );
 
 
   window.__ticketData =
     p;
+
 }
+
 
 /* =========================================================
    CLOSE CONFIRMATION
-   ========================================================= */
+========================================================= */
 
 window.closeConfirmation =
   function () {
@@ -1752,9 +2159,10 @@ window.closeConfirmation =
 
   };
 
+
 /* =========================================================
    DOWNLOAD TICKET
-   ========================================================= */
+========================================================= */
 
 window.downloadTicketJpeg =
   async function () {
@@ -1789,8 +2197,10 @@ window.downloadTicketJpeg =
         await html2canvas(
           el,
           {
-            backgroundColor: "#ffffff",
-            scale: 2
+            backgroundColor:
+              "#ffffff",
+            scale:
+              2
           }
         );
 
@@ -1812,12 +2222,14 @@ window.downloadTicketJpeg =
 
       a.click();
 
+
     } catch (error) {
 
       console.error(
         "Ticket generation error:",
         error
       );
+
 
       alert(
         "Unable to generate booking ticket."
@@ -1827,9 +2239,10 @@ window.downloadTicketJpeg =
 
   };
 
+
 /* =========================================================
    SERVICE DETAILS
-   ========================================================= */
+========================================================= */
 
 window.openServiceDetails =
   function (
@@ -1861,21 +2274,24 @@ function renderServicePopup(
     ?.remove();
 
 
-  const p =
-    document.createElement("div");
+  const popup =
+    document.createElement(
+      "div"
+    );
 
 
-  p.id =
+  popup.id =
     "service-popup";
 
 
-  p.className =
+  popup.className =
     "popup-overlay active";
 
 
-  p.innerHTML = `
+  popup.innerHTML = `
 
     <div class="popup-content">
+
 
       <img
         src="${escapeAttr(img)}"
@@ -1888,6 +2304,7 @@ function renderServicePopup(
 
 
       <div class="popup-body">
+
 
         <h2>
           ${escapeHtml(title)}
@@ -1913,6 +2330,7 @@ function renderServicePopup(
 
             openModal('appointment-modal');
           "
+          type="button"
         >
 
           <i data-lucide="calendar-plus"></i>
@@ -1921,6 +2339,7 @@ function renderServicePopup(
 
         </button>
 
+
       </div>
 
     </div>
@@ -1928,14 +2347,19 @@ function renderServicePopup(
   `;
 
 
-  document.body.appendChild(p);
+  document.body.appendChild(
+    popup
+  );
+
 
   refreshIcons();
+
 }
 
+
 /* =========================================================
-   OPEN / CLOSE MODALS
-   ========================================================= */
+   OPEN MODAL
+========================================================= */
 
 window.openModal =
   function (id) {
@@ -1978,6 +2402,10 @@ window.openModal =
   };
 
 
+/* =========================================================
+   CLOSE MODALS
+========================================================= */
+
 window.closeAllModals =
   function () {
 
@@ -2008,9 +2436,10 @@ window.closeAllModals =
 
   };
 
+
 /* =========================================================
    SIDEBAR
-   ========================================================= */
+========================================================= */
 
 window.toggleSidebar =
   function () {
@@ -2034,9 +2463,10 @@ window.toggleSidebar =
 
   };
 
+
 /* =========================================================
    BOTTOM NAV
-   ========================================================= */
+========================================================= */
 
 window.setActiveNav =
   function (el) {
@@ -2059,9 +2489,10 @@ window.setActiveNav =
 
   };
 
+
 /* =========================================================
-   SERVICE CAROUSEL
-   ========================================================= */
+   CAROUSEL
+========================================================= */
 
 window.scrollCarousel =
   function (dir) {
@@ -2079,9 +2510,10 @@ window.scrollCarousel =
 
   };
 
+
 /* =========================================================
    CUSTOM SYMPTOM
-   ========================================================= */
+========================================================= */
 
 window.toggleCustomSymptom =
   function () {
@@ -2126,9 +2558,10 @@ window.toggleCustomSymptom =
 
   };
 
+
 /* =========================================================
-   GEOLOCATION
-   ========================================================= */
+   LOCATION
+========================================================= */
 
 window.getLocation =
   function () {
@@ -2156,6 +2589,7 @@ window.getLocation =
 
       status.style.display =
         "block";
+
 
       status.textContent =
         "Detecting location...";
@@ -2207,6 +2641,7 @@ window.getLocation =
 
       },
 
+
       function (error) {
 
         console.warn(
@@ -2227,6 +2662,7 @@ window.getLocation =
 
       },
 
+
       {
         enableHighAccuracy:
           true,
@@ -2242,9 +2678,10 @@ window.getLocation =
 
   };
 
+
 /* =========================================================
    THEME
-   ========================================================= */
+========================================================= */
 
 window.toggleTheme =
   function () {
@@ -2280,13 +2717,13 @@ window.toggleTheme =
 
 function updateThemeIcon() {
 
-  const i =
+  const icon =
     document.getElementById(
       "theme-icon"
     );
 
 
-  if (!i) {
+  if (!icon) {
     return;
   }
 
@@ -2298,7 +2735,7 @@ function updateThemeIcon() {
       ) === "dark";
 
 
-  i.setAttribute(
+  icon.setAttribute(
     "data-lucide",
     dark
       ? "sun"
@@ -2310,9 +2747,10 @@ function updateThemeIcon() {
 
 }
 
+
 /* =========================================================
    PWA INSTALL
-   ========================================================= */
+========================================================= */
 
 window.installApp =
   async function () {
@@ -2321,7 +2759,8 @@ window.installApp =
       window.__deferredPrompt
     ) {
 
-      window.__deferredPrompt.prompt();
+      window.__deferredPrompt
+        .prompt();
 
 
       try {
@@ -2344,6 +2783,7 @@ window.installApp =
 
 
       return;
+
     }
 
 
@@ -2353,9 +2793,10 @@ window.installApp =
 
   };
 
+
 /* =========================================================
-   ICON REFRESH
-   ========================================================= */
+   ICONS
+========================================================= */
 
 function refreshIcons() {
 
@@ -2371,9 +2812,10 @@ function refreshIcons() {
 
 }
 
+
 /* =========================================================
-   HTML ESCAPING
-   ========================================================= */
+   ESCAPE
+========================================================= */
 
 function escapeHtml(
   value = ""
@@ -2386,11 +2828,20 @@ function escapeHtml(
 
         return {
 
-          "&": "&amp;",
-          "<": "&lt;",
-          ">": "&gt;",
-          '"': "&quot;",
-          "'": "&#039;"
+          "&":
+            "&amp;",
+
+          "<":
+            "&lt;",
+
+          ">":
+            "&gt;",
+
+          '"':
+            "&quot;",
+
+          "'":
+            "&#039;"
 
         }[m];
 
@@ -2413,9 +2864,10 @@ function escapeAttr(
 
 }
 
+
 /* =========================================================
    PWA INSTALL EVENT
-   ========================================================= */
+========================================================= */
 
 window.addEventListener(
   "beforeinstallprompt",
@@ -2434,7 +2886,7 @@ window.addEventListener(
 
 /* =========================================================
    INSTALL POPUP
-   ========================================================= */
+========================================================= */
 
 function showInstallPopup() {
 
@@ -2449,34 +2901,37 @@ function showInstallPopup() {
   }
 
 
-  const p =
+  const popup =
     document.createElement(
       "div"
     );
 
 
-  p.id =
+  popup.id =
     "install-popup";
 
 
-  p.className =
+  popup.className =
     "app-install-popup active";
 
 
-  p.innerHTML = `
+  popup.innerHTML = `
 
     <div class="install-row">
+
 
       <img
         src="assets/logo-app.png"
         alt="STRA CARE"
       >
 
+
       <div class="install-copy">
 
         <strong>
           Install STRA CARE
         </strong>
+
 
         <span>
           Install the booking app for faster,
@@ -2485,10 +2940,12 @@ function showInstallPopup() {
 
       </div>
 
+
     </div>
 
 
     <div class="install-actions">
+
 
       <button
         class="install-later"
@@ -2497,6 +2954,7 @@ function showInstallPopup() {
             .getElementById('install-popup')
             ?.remove()
         "
+        type="button"
       >
         Not now
       </button>
@@ -2510,22 +2968,27 @@ function showInstallPopup() {
             .getElementById('install-popup')
             ?.remove()
         "
+        type="button"
       >
         Install App
       </button>
+
 
     </div>
 
   `;
 
 
-  document.body.appendChild(p);
+  document.body.appendChild(
+    popup
+  );
 
 }
 
+
 /* =========================================================
    SEARCH
-   ========================================================= */
+========================================================= */
 
 function initMasterSearch() {
 
@@ -2546,6 +3009,20 @@ function initMasterSearch() {
   }
 
 
+  if (
+    input.dataset.initialized ===
+    "true"
+  ) {
+
+    return;
+
+  }
+
+
+  input.dataset.initialized =
+    "true";
+
+
   input.addEventListener(
     "input",
     function () {
@@ -2559,14 +3036,16 @@ function initMasterSearch() {
       if (!q) {
 
         results.innerHTML = `
+
           <p style="color:var(--text-muted)">
             Start typing to search our
-            physiotherapy services,
-            branch details, and general health info.
+            physiotherapy services and branches.
           </p>
+
         `;
 
         return;
+
       }
 
 
@@ -2576,6 +3055,7 @@ function initMasterSearch() {
             s[1]
               .toLowerCase()
               .includes(q) ||
+
             s[3]
               .toLowerCase()
               .includes(q)
@@ -2585,10 +3065,7 @@ function initMasterSearch() {
       const branchResults =
         BRANCHES.filter(
           b =>
-            b[0]
-              .toLowerCase()
-              .includes(q) ||
-            b[1]
+            b.name
               .toLowerCase()
               .includes(q)
         );
@@ -2607,6 +3084,7 @@ function initMasterSearch() {
               class="search-result"
               onclick="
                 closeAllModals();
+
                 openServiceDetails(
                   '${escapeAttr(s[0])}',
                   '${escapeAttr(s[1])}',
@@ -2637,14 +3115,20 @@ function initMasterSearch() {
 
           html += `
 
-            <div class="search-result">
+            <div
+              class="search-result"
+              onclick="
+                closeAllModals();
+                openModal('appointment-modal');
+              "
+            >
 
               <strong>
-                ${escapeHtml(b[0])}
+                ${escapeHtml(b.name)}
               </strong>
 
               <small>
-                ${escapeHtml(b[1])}
+                Branch
               </small>
 
             </div>
@@ -2658,9 +3142,11 @@ function initMasterSearch() {
       if (!html) {
 
         html = `
+
           <p style="color:var(--text-muted)">
             No matching services or branches found.
           </p>
+
         `;
 
       }
@@ -2674,13 +3160,14 @@ function initMasterSearch() {
 
 }
 
+
 /* =========================================================
-   WINDOW LOAD
-   ========================================================= */
+   LOAD
+========================================================= */
 
 window.addEventListener(
   "load",
-  async function () {
+  function () {
 
     renderServices();
 
@@ -2726,13 +3213,6 @@ window.addEventListener(
 
     refreshIcons();
 
-
-    initMasterSearch();
-
-
-    /*
-     * Remove splash screen
-     */
 
     setTimeout(
       function () {
