@@ -2680,3 +2680,72 @@ function initMasterSearch() {
 
 window.addEventListener(
   "load",
+  async function () {
+
+    renderServices();
+
+
+    const savedTheme =
+      localStorage.getItem(
+        "theme"
+      );
+
+
+    const systemDark =
+      !savedTheme &&
+      window.matchMedia &&
+      window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
+
+
+    if (
+      savedTheme === "dark" ||
+      systemDark
+    ) {
+
+      document.documentElement
+        .setAttribute(
+          "data-theme",
+          "dark"
+        );
+
+    } else {
+
+      document.documentElement
+        .setAttribute(
+          "data-theme",
+          "light"
+        );
+
+    }
+
+
+    updateThemeIcon();
+
+
+    refreshIcons();
+
+
+    initMasterSearch();
+
+
+    /*
+     * Remove splash screen
+     */
+
+    setTimeout(
+      function () {
+
+        document
+          .getElementById(
+            "splash-screen"
+          )
+          ?.remove();
+
+      },
+      1200
+    );
+
+  }
+);
